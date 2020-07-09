@@ -15,6 +15,12 @@ class CreateTransactionService {
   }
 
   public execute({ title, value, type }: RequestDTO): Transaction {
+    const { total } = this.transactionsRepository.getBalance();
+
+    if (value > total && type === 'outcome') {
+      throw Error('Saldo indisponível!');
+    }
+
     const newTransaction = this.transactionsRepository.create({
       title,
       value,
